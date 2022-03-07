@@ -1,0 +1,53 @@
+import argparse
+import glob
+import pathlib
+
+import pandas
+
+
+def read_dataframe(path):
+    if path.suffixes == [".csv"]:
+        return pandas.read_csv(path)
+
+
+def write_dataframe(dataframe, path):
+    if path.suffixes == [".csv"]:
+        dataframe.to_csv(path, index=False)
+
+
+def get_new_path(old_path, suffix="_joined"):
+    ext = "".join(old_path.suffixes)
+    name = old_path.name.split(ext)[0]
+    return old_path.with_name(f"{name}{suffix}{ext}")
+
+
+def left_join(lhs_dataframe, rhs_dataframe):
+    return lhs_dataframe.merge(rhs_dataframe, how="left", on="patient_id")
+
+
+def match_paths(pattern):
+    return [pathlib.Path(x).resolve() for x in glob.glob(pattern)]
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("lhs_paths", type=match_paths)
+    parser.add_argument("rhs_paths", type=match_paths)
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    lhs_paths = args.lhs_paths
+    rhs_path = args.rhs_paths[0]
+
+    rhs_dataframe = read_dataframe(rhs_path)
+    for lhs_path in lhs_paths:
+        lhs_dataframe = read_dataframe(lhs_path)
+        lhs_dataframe = left_join(lhs_dataframe, rhs_dataframe)
+        new_lhs_path = get_new_path(lhs_path)
+        write_dataframe(lhs_dataframe, new_lhs_path)
+
+
+if __name__ == "__main__":
+    main()
