@@ -63,9 +63,9 @@ def test_get_new_path(tmp_path, old_name, new_name):
 def test_left_join():
     lhs_dataframe = pandas.DataFrame(
         {
-            "patient_id": [1],
-            "has_sbp_event": [True],
-            "sbp_event_code": [198081000000101],
+            "patient_id": [1, 3],
+            "has_sbp_event": [True, True],
+            "sbp_event_code": [198081000000101, 198081000000101],
         }
     )
     rhs_dataframe = pandas.DataFrame(
@@ -76,10 +76,10 @@ def test_left_join():
     )
     exp_dataframe = pandas.DataFrame(
         {
-            "patient_id": [1],
-            "has_sbp_event": [True],
-            "sbp_event_code": [198081000000101],
-            "ethnicity": [1],
+            "patient_id": [1, 3],
+            "has_sbp_event": [True, True],
+            "sbp_event_code": [198081000000101, 198081000000101],
+            "ethnicity": [1, None],
         }
     )
     obs_dataframe = cohort_joiner.left_join(lhs_dataframe, rhs_dataframe)
