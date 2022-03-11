@@ -31,8 +31,8 @@ def match_paths(pattern):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("lhs_paths", type=match_paths)
-    parser.add_argument("rhs_paths", type=match_paths)
+    parser.add_argument("--lhs_paths", required=True, type=match_paths)
+    parser.add_argument("--rhs_paths", required=True, type=match_paths)
     return parser.parse_args()
 
 

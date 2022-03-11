@@ -90,7 +90,13 @@ def test_parse_args(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(
         "sys.argv",
-        ["cohort_joiner.py", "input_2021-*.csv", "input_ethnicity.csv"],
+        [
+            "cohort_joiner.py",
+            "--lhs_paths",
+            "input_2021-*.csv",
+            "--rhs_paths",
+            "input_ethnicity.csv",
+        ],
     )
     for name in ["input_2021-01-01.csv", "input_ethnicity.csv"]:
         pathlib.Path(name).touch()
