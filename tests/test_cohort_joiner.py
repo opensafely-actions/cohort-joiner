@@ -33,9 +33,8 @@ class TestReadDataframe:
         pandas_testing.assert_frame_equal(dataframe_in, dataframe_out)
 
     def test_read_xlsx(self):
-        # xlsx is not supported
-        dataframe_out = cohort_joiner.read_dataframe(pathlib.Path("input.xlsx"))
-        assert dataframe_out is None
+        with pytest.raises(ValueError):
+            cohort_joiner.read_dataframe(pathlib.Path("input.xlsx"))
 
 
 class TestWriteDataframe:
@@ -55,8 +54,8 @@ class TestWriteDataframe:
 
     def test_write_xlsx(self, tmp_path, dataframe):
         xlsx_path = tmp_path / "input.xlsx"
-        cohort_joiner.write_dataframe(dataframe, xlsx_path)
-        assert not xlsx_path.exists()
+        with pytest.raises(ValueError):
+            cohort_joiner.write_dataframe(dataframe, xlsx_path)
 
 
 @pytest.mark.parametrize(
