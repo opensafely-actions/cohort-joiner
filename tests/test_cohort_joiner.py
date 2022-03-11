@@ -1,3 +1,4 @@
+import csv
 import pathlib
 
 import pandas
@@ -41,7 +42,16 @@ class TestWriteDataframe:
     def test_write_csv(self, tmp_path, dataframe):
         csv_path = tmp_path / "input.csv"
         cohort_joiner.write_dataframe(dataframe, csv_path)
-        assert csv_path.exists()
+        # When writing a dataframe to a CSV, it's easy to write the dataframe's index,
+        # too. If the index doesn't have a name, then the first column in the CSV won't
+        # have a header. This is undesirable, as it can introduce subtle bugs into
+        # downstream actions within the OpenSAFELY framework, especially those that
+        # expect their input to resemble cohort-extractor's output. For this reason, we
+        # read the CSV that we wrote, and test that the header row (the zeroth row) is
+        # correct.
+        with csv_path.open(newline="") as f:
+            lines = list(csv.reader(f))
+        assert list(dataframe.columns) == lines[0]
 
     def test_write_xlsx(self, tmp_path, dataframe):
         xlsx_path = tmp_path / "input.xlsx"
@@ -63,9 +73,9 @@ def test_get_new_path(tmp_path, old_name, new_name):
 def test_left_join():
     lhs_dataframe = pandas.DataFrame(
         {
-            "patient_id": [1],
-            "has_sbp_event": [True],
-            "sbp_event_code": [198081000000101],
+            "patient_id": [1, 3],
+            "has_sbp_event": [True, True],
+            "sbp_event_code": [198081000000101, 198081000000101],
         }
     )
     rhs_dataframe = pandas.DataFrame(
@@ -76,10 +86,10 @@ def test_left_join():
     )
     exp_dataframe = pandas.DataFrame(
         {
-            "patient_id": [1],
-            "has_sbp_event": [True],
-            "sbp_event_code": [198081000000101],
-            "ethnicity": [1],
+            "patient_id": [1, 3],
+            "has_sbp_event": [True, True],
+            "sbp_event_code": [198081000000101, 198081000000101],
+            "ethnicity": [1, None],
         }
     )
     obs_dataframe = cohort_joiner.left_join(lhs_dataframe, rhs_dataframe)
