@@ -6,17 +6,23 @@ import pandas
 
 
 def read_dataframe(path):
-    if path.suffixes == [".csv"]:
+    ext = get_extension(path)
+    if ext == ".csv":
         return pandas.read_csv(path)
 
 
 def write_dataframe(dataframe, path):
-    if path.suffixes == [".csv"]:
+    ext = get_extension(path)
+    if ext == ".csv":
         dataframe.to_csv(path, index=False)
 
 
+def get_extension(path):
+    return "".join(path.suffixes)
+
+
 def get_new_path(old_path, suffix="_joined"):
-    ext = "".join(old_path.suffixes)
+    ext = get_extension(old_path)
     name = old_path.name.split(ext)[0]
     return old_path.with_name(f"{name}{suffix}{ext}")
 
