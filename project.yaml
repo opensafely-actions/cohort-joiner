@@ -5,19 +5,27 @@ expectations:
 
 actions:
   generate_cohort:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-01-01 to 2021-06-30 by month"
+    run: >
+      cohortextractor:latest generate_cohort
+        --study-definition study_definition
+        --index-date-range "2021-01-01 to 2021-06-30 by month"
     outputs:
       highly_sensitive:
         cohort: output/input_2021-*.csv
 
   generate_ethnicity_cohort:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity
+    run: >
+      cohortextractor:latest generate_cohort
+        --study-definition study_definition_ethnicity
     outputs:
       highly_sensitive:
         cohort: output/input_ethnicity.csv
 
   join_cohorts:
-    run: python:latest analysis/cohort_joiner.py output/input_2021-*.csv output/input_ethnicity.csv
+    run: >
+      python:latest analysis/cohort_joiner.py
+        output/input_2021-*.csv
+        output/input_ethnicity.csv
     needs: [generate_cohort, generate_ethnicity_cohort]
     outputs:
       highly_sensitive:
