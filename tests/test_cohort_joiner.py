@@ -86,17 +86,22 @@ def test_left_join():
     pandas_testing.assert_frame_equal(exp_dataframe, obs_dataframe)
 
 
-@pytest.mark.parametrize(
-    "pattern,matched_names",
-    [
-        ("input_2021-*.csv", ["input_2021-01-01.csv"]),
-    ],
-)
-def test_match_paths(tmp_path, pattern, matched_names):
+def test_parse_args(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "cohort_joiner.py",
+            "--lhs",
+            "input_2021-*.csv",
+            "--rhs",
+            "input_ethnicity.csv",
+        ],
+    )
     for name in ["input_2021-01-01.csv", "input_ethnicity.csv"]:
-        path = tmp_path / name
-        path.touch()
+        pathlib.Path(name).touch()
 
-    exp_paths = [tmp_path / matched_name for matched_name in matched_names]
-    obs_paths = cohort_joiner.match_paths(str(tmp_path / pattern))
-    assert exp_paths == obs_paths
+    args = cohort_joiner.parse_args()
+
+    assert args.lhs_paths == [tmp_path / "input_2021-01-01.csv"]
+    assert args.rhs_paths == [tmp_path / "input_ethnicity.csv"]

@@ -31,8 +31,22 @@ def match_paths(pattern):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("lhs_paths", type=match_paths)
-    parser.add_argument("rhs_paths", type=match_paths)
+    parser.add_argument(
+        "--lhs",
+        dest="lhs_paths",
+        required=True,
+        type=match_paths,
+        metavar="LHS_PATTERN",
+        help="Glob pattern for matching one or more dataframes that will form the left-hand side of the join",
+    )
+    parser.add_argument(
+        "--rhs",
+        dest="rhs_paths",
+        required=True,
+        type=match_paths,
+        metavar="RHS_PATTERN",
+        help="Glob pattern for matching one dataframe that will form the right-hand side of the join",
+    )
     return parser.parse_args()
 
 
