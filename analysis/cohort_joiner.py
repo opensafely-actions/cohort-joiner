@@ -9,12 +9,16 @@ def read_dataframe(path):
     ext = get_extension(path)
     if ext == ".csv":
         return pandas.read_csv(path)
+    else:
+        raise ValueError(f"Cannot read '{ext}' files")
 
 
 def write_dataframe(dataframe, path):
     ext = get_extension(path)
     if ext == ".csv":
         dataframe.to_csv(path, index=False)
+    else:
+        raise ValueError(f"Cannot write '{ext}' files")
 
 
 def get_extension(path):
