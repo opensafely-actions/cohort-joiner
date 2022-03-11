@@ -92,9 +92,9 @@ def test_parse_args(tmp_path, monkeypatch):
         "sys.argv",
         [
             "cohort_joiner.py",
-            "--lhs_paths",
+            "--lhs",
             "input_2021-*.csv",
-            "--rhs_paths",
+            "--rhs",
             "input_ethnicity.csv",
         ],
     )

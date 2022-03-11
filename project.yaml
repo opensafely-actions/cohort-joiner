@@ -24,8 +24,8 @@ actions:
   join_cohorts:
     run: >
       python:latest analysis/cohort_joiner.py
-        --lhs_paths output/input_2021-*.csv
-        --rhs_paths output/input_ethnicity.csv
+        --lhs output/input_2021-*.csv
+        --rhs output/input_ethnicity.csv
     needs: [generate_cohort, generate_ethnicity_cohort]
     outputs:
       highly_sensitive:
