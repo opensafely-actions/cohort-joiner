@@ -15,7 +15,7 @@ def read_dataframe(path):
 
 def write_dataframe(dataframe, path):
     ext = get_extension(path)
-    if ext == ".csv":
+    if ext == ".csv" or ext == ".csv.gz":
         dataframe.to_csv(path, index=False)
     else:
         raise ValueError(f"Cannot write '{ext}' files")
