@@ -21,19 +21,23 @@ def dataframe():
 
 
 @pytest.fixture
-def csv_dataframe(tmp_path, dataframe):
-    csv_path = tmp_path / "input.csv"
-    dataframe.to_csv(csv_path, index=False)
-    return csv_path, dataframe
+def write_dataframe(tmp_path, dataframe):
+    def _write_dataframe(ext):
+        path = tmp_path / f"input{ext}"
+        cohort_joiner.write_dataframe(dataframe, path)
+        return path, dataframe
+
+    return _write_dataframe
 
 
 class TestReadDataframe:
-    def test_read_csv(self, csv_dataframe):
-        csv_path, dataframe_in = csv_dataframe
-        dataframe_out = cohort_joiner.read_dataframe(csv_path)
+    @pytest.mark.parametrize("ext", [".csv"])
+    def test_read_supported_file_type(self, write_dataframe, ext):
+        path, dataframe_in = write_dataframe(ext)
+        dataframe_out = cohort_joiner.read_dataframe(path)
         pandas_testing.assert_frame_equal(dataframe_in, dataframe_out)
 
-    def test_read_xlsx(self):
+    def test_read_unsupported_file_type(self):
         with pytest.raises(ValueError):
             cohort_joiner.read_dataframe(pathlib.Path("input.xlsx"))
 
