@@ -7,7 +7,7 @@ import pandas
 
 def read_dataframe(path):
     ext = get_extension(path)
-    if ext == ".csv":
+    if ext == ".csv" or ext == ".csv.gz":
         return pandas.read_csv(path)
     else:
         raise ValueError(f"Cannot read '{ext}' files")
