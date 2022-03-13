@@ -38,8 +38,14 @@ class TestReadDataframe:
 
 
 class TestWriteDataframe:
-    def test_write_csv(self, tmp_path, dataframe):
-        csv_path = tmp_path / "input.csv"
+    @pytest.mark.parametrize(
+        "ext,open_func",
+        [
+            (".csv", open),
+        ],
+    )
+    def test_write_csv(self, tmp_path, ext, dataframe, open_func):
+        csv_path = tmp_path / f"input{ext}"
         cohort_joiner.write_dataframe(dataframe, csv_path)
         # When writing a dataframe to a CSV, it's easy to write the dataframe's index,
         # too. If the index doesn't have a name, then the first column in the CSV won't
@@ -48,7 +54,7 @@ class TestWriteDataframe:
         # expect their input to resemble cohort-extractor's output. For this reason, we
         # read the CSV that we wrote, and test that the header row (the zeroth row) is
         # correct.
-        with csv_path.open(newline="") as f:
+        with open_func(csv_path, "rt", newline="") as f:
             lines = list(csv.reader(f))
         assert list(dataframe.columns) == lines[0]
 
