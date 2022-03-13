@@ -1,4 +1,5 @@
 import csv
+import gzip
 import pathlib
 
 import pandas
@@ -42,6 +43,7 @@ class TestWriteDataframe:
         "ext,open_func",
         [
             (".csv", open),
+            (".csv.gz", gzip.open),
         ],
     )
     def test_write_csv(self, tmp_path, ext, dataframe, open_func):
