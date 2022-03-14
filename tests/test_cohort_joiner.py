@@ -64,6 +64,11 @@ class TestWriteDataframe:
             lines = list(csv.reader(f))
         assert list(dataframe.columns) == lines[0]
 
+    def test_write_feather(self, tmp_path, dataframe):
+        feather_path = tmp_path / "input.feather"
+        cohort_joiner.write_dataframe(dataframe, feather_path)
+        assert feather_path.exists()
+
     def test_write_unsupported_file_type(self, tmp_path, dataframe):
         xlsx_path = tmp_path / "input.xlsx"
         with pytest.raises(ValueError):
