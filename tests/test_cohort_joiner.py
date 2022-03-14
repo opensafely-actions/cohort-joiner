@@ -31,11 +31,24 @@ def write_dataframe(tmp_path, dataframe):
 
 
 class TestReadDataframe:
-    @pytest.mark.parametrize("ext", [".csv", ".csv.gz", ".feather"])
-    def test_read_supported_file_type(self, write_dataframe, ext):
+    @pytest.mark.parametrize(
+        "ext,check_dtype",
+        [
+            (".csv", True),
+            (".csv.gz", True),
+            (".feather", True),
+            # Stata stores int64 as float64, meaning that the sbp_event_code column
+            # causes this test to fail.
+            (".dta", False),
+            (".dta.gz", False),
+        ],
+    )
+    def test_read_supported_file_type(self, write_dataframe, ext, check_dtype):
         path, dataframe_in = write_dataframe(ext)
         dataframe_out = cohort_joiner.read_dataframe(path)
-        pandas_testing.assert_frame_equal(dataframe_in, dataframe_out)
+        pandas_testing.assert_frame_equal(
+            dataframe_in, dataframe_out, check_dtype=check_dtype
+        )
 
     def test_read_unsupported_file_type(self):
         with pytest.raises(ValueError):
