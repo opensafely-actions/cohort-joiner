@@ -9,6 +9,8 @@ def read_dataframe(path):
     ext = get_extension(path)
     if ext == ".csv" or ext == ".csv.gz":
         return pandas.read_csv(path)
+    elif ext == ".feather":
+        return pandas.read_feather(path)
     else:
         raise ValueError(f"Cannot read '{ext}' files")
 

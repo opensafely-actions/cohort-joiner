@@ -31,7 +31,7 @@ def write_dataframe(tmp_path, dataframe):
 
 
 class TestReadDataframe:
-    @pytest.mark.parametrize("ext", [".csv", ".csv.gz"])
+    @pytest.mark.parametrize("ext", [".csv", ".csv.gz", ".feather"])
     def test_read_supported_file_type(self, write_dataframe, ext):
         path, dataframe_in = write_dataframe(ext)
         dataframe_out = cohort_joiner.read_dataframe(path)
