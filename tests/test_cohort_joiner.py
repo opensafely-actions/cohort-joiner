@@ -69,6 +69,12 @@ class TestWriteDataframe:
         cohort_joiner.write_dataframe(dataframe, feather_path)
         assert feather_path.exists()
 
+    @pytest.mark.parametrize("ext", [".dta", ".dta.gz"])
+    def test_write_dta(self, tmp_path, ext, dataframe):
+        dta_path = tmp_path / f"input{ext}"
+        cohort_joiner.write_dataframe(dataframe, dta_path)
+        assert dta_path.exists()
+
     def test_write_unsupported_file_type(self, tmp_path, dataframe):
         xlsx_path = tmp_path / "input.xlsx"
         with pytest.raises(ValueError):

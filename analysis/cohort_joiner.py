@@ -16,11 +16,24 @@ def read_dataframe(path):
 
 
 def write_dataframe(dataframe, path):
+    # Aside from argument names and types, we use the same code here as we do in
+    # `cohortextractor.pandas_utils.dataframe_to_file`.
     ext = get_extension(path)
     if ext == ".csv" or ext == ".csv.gz":
         dataframe.to_csv(path, index=False)
     elif ext == ".feather":
         dataframe.to_feather(path)
+    elif ext == ".dta" or ext == ".dta.gz":
+        dataframe_copy = dataframe.copy(deep=False)
+        for column, dtype in list(dataframe_copy.dtypes.items()):
+            if dtype.name == "category":
+                dataframe_copy[column] = dataframe_copy[column].__array__()
+        convert_dates = {
+            column: "td"
+            for (column, dtype) in dataframe_copy.dtypes.items()
+            if dtype.name == "datetime64[ns]"
+        }
+        dataframe_copy.to_stata(path, write_index=False, convert_dates=convert_dates)
     else:
         raise ValueError(f"Cannot write '{ext}' files")
 
