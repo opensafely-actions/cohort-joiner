@@ -4,3 +4,4 @@
 # pip-compile --generate-hashes --output-file=requirements.prod.txt requirements.prod.in
 
 pandas==1.0.1
+pyarrow==3.0.0
