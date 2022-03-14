@@ -11,6 +11,8 @@ def read_dataframe(path):
         return pandas.read_csv(path)
     elif ext == ".feather":
         return pandas.read_feather(path)
+    elif ext == ".dta" or ext == ".dta.gz":
+        return pandas.read_stata(path)
     else:
         raise ValueError(f"Cannot read '{ext}' files")
 
