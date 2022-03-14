@@ -17,6 +17,8 @@ def write_dataframe(dataframe, path):
     ext = get_extension(path)
     if ext == ".csv" or ext == ".csv.gz":
         dataframe.to_csv(path, index=False)
+    elif ext == ".feather":
+        dataframe.to_feather(path)
     else:
         raise ValueError(f"Cannot write '{ext}' files")
 
