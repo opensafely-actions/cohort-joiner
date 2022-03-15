@@ -3,6 +3,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   check:
@@ -34,3 +36,15 @@ jobs:
       - name: Run tests
         run: |
           just test
+
+  tag-new-version:
+    needs: [check, test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Tag new version
+        uses: mathieudutour/github-tag-action@d745f2e74aaf1ee82e747b181f7a0967978abee0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          create_annotated_tag: true
