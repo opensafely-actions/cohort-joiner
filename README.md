@@ -60,6 +60,9 @@ join_cohorts:
       cohort: output/input_2021-*_joined.csv
 ```
 
+For each left-hand cohort file, there will now be a corresponding joined file.
+For example, given a left-hand cohort file called `input_2021-01-01.csv`, there will now be a corresponding joined file called `input_2021-01-01_joined.csv`.
+
 [1]: https://github.com/opensafely-actions/cohort-joiner/tags
 [cohort-extractor]: https://docs.opensafely.org/actions-cohortextractor/
 
