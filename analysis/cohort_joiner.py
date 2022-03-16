@@ -6,17 +6,46 @@ import pandas
 
 
 def read_dataframe(path):
-    if path.suffixes == [".csv"]:
+    ext = get_extension(path)
+    if ext == ".csv" or ext == ".csv.gz":
         return pandas.read_csv(path)
+    elif ext == ".feather":
+        return pandas.read_feather(path)
+    elif ext == ".dta" or ext == ".dta.gz":
+        return pandas.read_stata(path)
+    else:
+        raise ValueError(f"Cannot read '{ext}' files")
 
 
 def write_dataframe(dataframe, path):
-    if path.suffixes == [".csv"]:
+    # Aside from argument names and types, we use the same code here as we do in
+    # `cohortextractor.pandas_utils.dataframe_to_file`.
+    ext = get_extension(path)
+    if ext == ".csv" or ext == ".csv.gz":
         dataframe.to_csv(path, index=False)
+    elif ext == ".feather":
+        dataframe.to_feather(path)
+    elif ext == ".dta" or ext == ".dta.gz":
+        dataframe_copy = dataframe.copy(deep=False)
+        for column, dtype in list(dataframe_copy.dtypes.items()):
+            if dtype.name == "category":
+                dataframe_copy[column] = dataframe_copy[column].__array__()
+        convert_dates = {
+            column: "td"
+            for (column, dtype) in dataframe_copy.dtypes.items()
+            if dtype.name == "datetime64[ns]"
+        }
+        dataframe_copy.to_stata(path, write_index=False, convert_dates=convert_dates)
+    else:
+        raise ValueError(f"Cannot write '{ext}' files")
+
+
+def get_extension(path):
+    return "".join(path.suffixes)
 
 
 def get_new_path(old_path, suffix="_joined"):
-    ext = "".join(old_path.suffixes)
+    ext = get_extension(old_path)
     name = old_path.name.split(ext)[0]
     return old_path.with_name(f"{name}{suffix}{ext}")
 

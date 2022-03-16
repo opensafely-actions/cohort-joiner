@@ -1,4 +1,5 @@
 import csv
+import gzip
 import pathlib
 
 import pandas
@@ -20,27 +21,50 @@ def dataframe():
 
 
 @pytest.fixture
-def csv_dataframe(tmp_path, dataframe):
-    csv_path = tmp_path / "input.csv"
-    dataframe.to_csv(csv_path, index=False)
-    return csv_path, dataframe
+def write_dataframe(tmp_path, dataframe):
+    def _write_dataframe(ext):
+        path = tmp_path / f"input{ext}"
+        cohort_joiner.write_dataframe(dataframe, path)
+        return path, dataframe
+
+    return _write_dataframe
 
 
 class TestReadDataframe:
-    def test_read_csv(self, csv_dataframe):
-        csv_path, dataframe_in = csv_dataframe
-        dataframe_out = cohort_joiner.read_dataframe(csv_path)
-        pandas_testing.assert_frame_equal(dataframe_in, dataframe_out)
+    @pytest.mark.parametrize(
+        "ext,check_dtype",
+        [
+            (".csv", True),
+            (".csv.gz", True),
+            (".feather", True),
+            # Stata stores int64 as float64, meaning that the sbp_event_code column
+            # causes this test to fail.
+            (".dta", False),
+            (".dta.gz", False),
+        ],
+    )
+    def test_read_supported_file_type(self, write_dataframe, ext, check_dtype):
+        path, dataframe_in = write_dataframe(ext)
+        dataframe_out = cohort_joiner.read_dataframe(path)
+        pandas_testing.assert_frame_equal(
+            dataframe_in, dataframe_out, check_dtype=check_dtype
+        )
 
-    def test_read_xlsx(self):
-        # xlsx is not supported
-        dataframe_out = cohort_joiner.read_dataframe(pathlib.Path("input.xlsx"))
-        assert dataframe_out is None
+    def test_read_unsupported_file_type(self):
+        with pytest.raises(ValueError):
+            cohort_joiner.read_dataframe(pathlib.Path("input.xlsx"))
 
 
 class TestWriteDataframe:
-    def test_write_csv(self, tmp_path, dataframe):
-        csv_path = tmp_path / "input.csv"
+    @pytest.mark.parametrize(
+        "ext,open_func",
+        [
+            (".csv", open),
+            (".csv.gz", gzip.open),
+        ],
+    )
+    def test_write_csv(self, tmp_path, ext, dataframe, open_func):
+        csv_path = tmp_path / f"input{ext}"
         cohort_joiner.write_dataframe(dataframe, csv_path)
         # When writing a dataframe to a CSV, it's easy to write the dataframe's index,
         # too. If the index doesn't have a name, then the first column in the CSV won't
@@ -49,14 +73,25 @@ class TestWriteDataframe:
         # expect their input to resemble cohort-extractor's output. For this reason, we
         # read the CSV that we wrote, and test that the header row (the zeroth row) is
         # correct.
-        with csv_path.open(newline="") as f:
+        with open_func(csv_path, "rt", newline="") as f:
             lines = list(csv.reader(f))
         assert list(dataframe.columns) == lines[0]
 
-    def test_write_xlsx(self, tmp_path, dataframe):
+    def test_write_feather(self, tmp_path, dataframe):
+        feather_path = tmp_path / "input.feather"
+        cohort_joiner.write_dataframe(dataframe, feather_path)
+        feather_path.exists()
+
+    @pytest.mark.parametrize("ext", [".dta", ".dta.gz"])
+    def test_write_dta(self, tmp_path, ext, dataframe):
+        dta_path = tmp_path / f"input{ext}"
+        cohort_joiner.write_dataframe(dataframe, dta_path)
+        dta_path.exists()
+
+    def test_write_unsupported_file_type(self, tmp_path, dataframe):
         xlsx_path = tmp_path / "input.xlsx"
-        cohort_joiner.write_dataframe(dataframe, xlsx_path)
-        assert not xlsx_path.exists()
+        with pytest.raises(ValueError):
+            cohort_joiner.write_dataframe(dataframe, xlsx_path)
 
 
 @pytest.mark.parametrize(
