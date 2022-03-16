@@ -4,6 +4,8 @@ expectations:
   population_size: 1000
 
 actions:
+  # These actions are copied-and-pasted into README.md for user-facing documentation.
+  # If you change them here, then please change them there.
   generate_cohort:
     run: >
       cohortextractor:latest generate_cohort
@@ -22,6 +24,8 @@ actions:
         cohort: output/input_ethnicity.csv
 
   join_cohorts:
+    # For user-facing documentation, call:
+    # cohort-joiner:[version]
     run: >
       python:latest analysis/cohort_joiner.py
         --lhs output/input_2021-*.csv
