@@ -131,7 +131,14 @@ def test_left_join():
     pandas_testing.assert_frame_equal(exp_dataframe, obs_dataframe)
 
 
-def test_parse_args(tmp_path, monkeypatch):
+@pytest.mark.parametrize(
+    "flags,dest,value",
+    [
+        ([], "overwrite", False),
+        (["--overwrite"], "overwrite", True),
+    ],
+)
+def test_parse_args(tmp_path, monkeypatch, flags, dest, value):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(
         "sys.argv",
@@ -141,7 +148,8 @@ def test_parse_args(tmp_path, monkeypatch):
             "input_2021-*.csv",
             "--rhs",
             "input_ethnicity.csv",
-        ],
+        ]
+        + flags,
     )
     for name in ["input_2021-01-01.csv", "input_ethnicity.csv"]:
         pathlib.Path(name).touch()
@@ -150,3 +158,4 @@ def test_parse_args(tmp_path, monkeypatch):
 
     assert args.lhs_paths == [tmp_path / "input_2021-01-01.csv"]
     assert args.rhs_paths == [tmp_path / "input_ethnicity.csv"]
+    assert getattr(args, dest) is value

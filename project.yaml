@@ -30,7 +30,8 @@ actions:
       python:latest analysis/cohort_joiner.py
         --lhs output/input_2021-*.csv
         --rhs output/input_ethnicity.csv
+        --overwrite
     needs: [generate_cohort, generate_ethnicity_cohort]
     outputs:
       highly_sensitive:
-        cohort: output/input_2021-*_joined.csv
+        cohort: output/input_*.csv

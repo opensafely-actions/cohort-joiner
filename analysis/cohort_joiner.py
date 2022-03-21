@@ -65,6 +65,11 @@ def parse_args():
         metavar="RHS_PATTERN",
         help="Glob pattern for matching one dataframe that will form the right-hand side of the join",
     )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite the dataframes matched by the lhs glob pattern",
+    )
     return parser.parse_args()
 
 
@@ -72,12 +77,16 @@ def main():
     args = parse_args()
     lhs_paths = args.lhs_paths
     rhs_path = args.rhs_paths[0]
+    overwrite = args.overwrite
 
     rhs_dataframe = read_dataframe(rhs_path)
     for lhs_path in lhs_paths:
         lhs_dataframe = read_dataframe(lhs_path)
         lhs_dataframe = left_join(lhs_dataframe, rhs_dataframe)
-        new_lhs_path = get_new_path(lhs_path)
+        if overwrite:
+            new_lhs_path = lhs_path
+        else:
+            new_lhs_path = get_new_path(lhs_path)
         write_dataframe(lhs_dataframe, new_lhs_path)
 
 

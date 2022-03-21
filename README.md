@@ -54,14 +54,16 @@ join_cohorts:
     cohort-joiner:[version]
       --lhs output/input_2021-*.csv
       --rhs output/input_ethnicity.csv
+      --overwrite
   needs: [generate_cohort, generate_ethnicity_cohort]
   outputs:
     highly_sensitive:
-      cohort: output/input_2021-*_joined.csv
+      cohort: output/input_*.csv
 ```
 
-For each left-hand cohort file, there will now be a corresponding joined file.
-For example, given a left-hand cohort file called `input_2021-01-01.csv`, there will now be a corresponding joined file called `input_2021-01-01_joined.csv`.
+With the `--overwrite` argument, each left-hand cohort file will be overwritten.
+Without this argument, each left-hand cohort file will have a corresponding joined file.
+For example, the left-hand cohort file called `input_2021-01-01.csv` will have a corresponding joined file called `input_2021-01-01_joined.csv`.
 
 [1]: https://github.com/opensafely-actions/cohort-joiner/tags
 [cohort-extractor]: https://docs.opensafely.org/actions-cohortextractor/
