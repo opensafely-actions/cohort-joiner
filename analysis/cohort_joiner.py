@@ -43,8 +43,12 @@ def left_join(lhs_dataframe, rhs_dataframe):
     return lhs_dataframe.merge(rhs_dataframe, how="left", on="patient_id")
 
 
+def get_path(*args):
+    return pathlib.Path(*args).resolve()
+
+
 def match_paths(pattern):
-    return [pathlib.Path(x).resolve() for x in glob.glob(pattern)]
+    return [get_path(x) for x in glob.glob(pattern)]
 
 
 def parse_args():
