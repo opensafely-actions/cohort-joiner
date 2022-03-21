@@ -25,13 +25,4 @@ study = StudyDefinition(
         between=["index_date", "index_date"],
         return_expectations={"incidence": 0.1},
     ),
-    sbp_event_code=patients.with_these_clinical_events(
-        codelist=sbp_codelist,
-        between=["index_date", "index_date"],
-        returning="code",
-        return_expectations={
-            "category": {"ratios": {x: 1 / len(sbp_codelist) for x in sbp_codelist}},
-            "incidence": 0.1,
-        },
-    ),
 )
