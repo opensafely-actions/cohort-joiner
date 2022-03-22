@@ -33,18 +33,16 @@ def get_extension(path):
     return "".join(path.suffixes)
 
 
-def get_new_path(old_path, suffix="_joined"):
-    ext = get_extension(old_path)
-    name = old_path.name.split(ext)[0]
-    return old_path.with_name(f"{name}{suffix}{ext}")
-
-
 def left_join(lhs_dataframe, rhs_dataframe):
     return lhs_dataframe.merge(rhs_dataframe, how="left", on="patient_id")
 
 
+def get_path(*args):
+    return pathlib.Path(*args).resolve()
+
+
 def match_paths(pattern):
-    return [pathlib.Path(x).resolve() for x in glob.glob(pattern)]
+    return [get_path(x) for x in glob.glob(pattern)]
 
 
 def parse_args():
@@ -55,7 +53,7 @@ def parse_args():
         required=True,
         type=match_paths,
         metavar="LHS_PATTERN",
-        help="Glob pattern for matching one or more dataframes that will form the left-hand side of the join",
+        help="Glob pattern for matching one or more input dataframes that will form the left-hand side of the join",
     )
     parser.add_argument(
         "--rhs",
@@ -63,22 +61,37 @@ def parse_args():
         required=True,
         type=match_paths,
         metavar="RHS_PATTERN",
-        help="Glob pattern for matching one dataframe that will form the right-hand side of the join",
+        help="Glob pattern for matching one input dataframe that will form the right-hand side of the join",
+    )
+    parser.add_argument(
+        "--output-dir",
+        dest="output_path",
+        default="output/joined",
+        type=get_path,
+        help="The output directory. If it doesn't exist, then it will be created",
     )
     return parser.parse_args()
+
+
+def check_paths(lhs_paths, rhs_path, output_path):
+    if any(output_path == path.parent for path in lhs_paths + [rhs_path]):
+        raise ValueError("The output directory cannot contain the input dataframes")
 
 
 def main():
     args = parse_args()
     lhs_paths = args.lhs_paths
     rhs_path = args.rhs_paths[0]
+    output_path = args.output_path
+    check_paths(lhs_paths, rhs_path, output_path)
 
     rhs_dataframe = read_dataframe(rhs_path)
     for lhs_path in lhs_paths:
         lhs_dataframe = read_dataframe(lhs_path)
         lhs_dataframe = left_join(lhs_dataframe, rhs_dataframe)
-        new_lhs_path = get_new_path(lhs_path)
-        write_dataframe(lhs_dataframe, new_lhs_path)
+        # We only make output_path when there's a lhs_dataframe to write to it
+        output_path.mkdir(parents=True, exist_ok=True)
+        write_dataframe(lhs_dataframe, output_path / lhs_path.name)
 
 
 if __name__ == "__main__":

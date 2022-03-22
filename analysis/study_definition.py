@@ -1,4 +1,4 @@
-from cohortextractor import StudyDefinition, codelist_from_csv, patients
+from cohortextractor import Measure, StudyDefinition, codelist_from_csv, patients
 
 
 sbp_codelist = codelist_from_csv(
@@ -20,18 +20,27 @@ study = StudyDefinition(
         on_or_before="index_date",
         return_expectations={"incidence": 0.1},
     ),
+    stp_code=patients.registered_practice_as_of(
+        date="index_date",
+        returning="stp_code",
+        return_expectations={
+            "category": {
+                "ratios": {f"STP{x}": 1 / 50 for x in range(50)},
+            },
+        },
+    ),
     has_sbp_event=patients.with_these_clinical_events(
         codelist=sbp_codelist,
         between=["index_date", "index_date"],
         return_expectations={"incidence": 0.1},
     ),
-    sbp_event_code=patients.with_these_clinical_events(
-        codelist=sbp_codelist,
-        between=["index_date", "index_date"],
-        returning="code",
-        return_expectations={
-            "category": {"ratios": {x: 1 / len(sbp_codelist) for x in sbp_codelist}},
-            "incidence": 0.1,
-        },
-    ),
 )
+
+measures = [
+    Measure(
+        id="has_sbp_event_by_stp_code",
+        numerator="has_sbp_event",
+        denominator="population",
+        group_by="stp_code",
+    ),
+]
