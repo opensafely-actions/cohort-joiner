@@ -94,17 +94,6 @@ class TestWriteDataframe:
             cohort_joiner.write_dataframe(dataframe, xlsx_path)
 
 
-@pytest.mark.parametrize(
-    "old_name,new_name",
-    [
-        ("input.csv", "input_joined.csv"),
-        ("input.csv.gz", "input_joined.csv.gz"),
-    ],
-)
-def test_get_new_path(tmp_path, old_name, new_name):
-    assert tmp_path / new_name == cohort_joiner.get_new_path(tmp_path / old_name)
-
-
 def test_left_join():
     lhs_dataframe = pandas.DataFrame(
         {
@@ -150,3 +139,19 @@ def test_parse_args(tmp_path, monkeypatch):
 
     assert args.lhs_paths == [tmp_path / "input_2021-01-01.csv"]
     assert args.rhs_paths == [tmp_path / "input_ethnicity.csv"]
+    assert args.output_path == tmp_path / "output" / "joined"
+
+
+class TestCheckPaths:
+    def test_output_contains_input(self, tmp_path):
+        lhs_paths = [tmp_path / "input_2021-01-01.csv"]
+        rhs_path = tmp_path / "input_ethnicity.csv"
+        output_path = tmp_path
+        with pytest.raises(ValueError):
+            cohort_joiner.check_paths(lhs_paths, rhs_path, output_path)
+
+    def test_output_does_not_contain_input(self, tmp_path):
+        lhs_paths = [tmp_path / "input_2021-01-01.csv"]
+        rhs_path = tmp_path / "input_ethnicity.csv"
+        output_path = tmp_path / "joined"
+        assert cohort_joiner.check_paths(lhs_paths, rhs_path, output_path) is None
