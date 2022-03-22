@@ -35,3 +35,13 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/joined/input_2021-*.csv
+
+  generate_measures:
+    run: >
+      cohortextractor:latest generate_measures
+        --study-definition study_definition
+        --output-dir output/joined
+    needs: [join_cohorts]
+    outputs:
+      moderately_sensitive:
+        measure: output/joined/measure_*.csv

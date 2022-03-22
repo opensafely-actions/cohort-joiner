@@ -17,6 +17,7 @@ In summary:
 * Use cohort-extractor to extract the right hand cohort.
   This is a single extract for variables that are not expected to change, such as ethnicity.
 * Use cohort-joiner to join the cohorts, and then to save them to an output directory.
+* Optionally, use cohort-extractor to generate one or more measures from the joined cohorts.
 
 Let's walk through an example _project.yaml_.
 
@@ -45,7 +46,7 @@ generate_ethnicity_cohort:
       cohort: output/input_ethnicity.csv
 ```
 
-Finally, the following cohort-joiner reusable action joins the cohorts, and then saves them to an output directory.
+The following cohort-joiner reusable action joins the cohorts, and then saves them to an output directory.
 Remember to replace `[version]` with [a cohort-joiner version][1]:
 
 ```yaml
@@ -59,6 +60,20 @@ join_cohorts:
   outputs:
     highly_sensitive:
       cohort: output/joined/input_2021-*.csv
+```
+
+Optionally, the following cohort-extractor action generates one or more measures from the joined cohorts:
+
+```yaml
+generate_measures:
+  run: >
+    cohortextractor:latest generate_measures
+      --study-definition study_definition
+      --output-dir output/joined
+  needs: [join_cohorts]
+  outputs:
+    moderately_sensitive:
+      measure: output/joined/measure_*.csv
 ```
 
 [1]: https://github.com/opensafely-actions/cohort-joiner/tags
