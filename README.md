@@ -5,7 +5,23 @@ Typically, the left-hand cohorts are several weekly or monthly extracts of pseud
 The right-hand cohort is a single extract of these data for variables that are not expected to change.
 Extracting and joining the cohorts in this way is more efficient than several weekly or monthly extracts of these data for all variables.
 
+Using cohort-joiner has several advantages over writing a [scripted action][]:
+
+* cohort-joiner uses the same logic as cohort-extractor to save files,
+  meaning that it's compatible with "downstream" actions,
+  such as [the measures framework][].
+* cohort-joiner uses [an efficient strategy][2] for joining the extracts.
+  This strategy uses roughly 2.9 times less memory than an alternative, previously documented, strategy.
+* cohort-joiner doesn't replace the extracts;
+  instead, it saves the joined extracts in a new output directory.
+  Replacing the extracts makes it harder to construct an audit trail, which reduces computational and analytical transparency;
+  [core principles][3] of the OpenSAFELY platform.
+
+[2]: https://gist.github.com/iaindillingham/4903394b65dc3bad3b54e0eb1cde7ea5
+[3]: https://docs.opensafely.org/
 [left join]: https://en.wikipedia.org/wiki/Join_(SQL)#Left_outer_join
+[scripted action]: https://docs.opensafely.org/actions-scripts/
+[the measures framework]: https://docs.opensafely.org/measures/
 
 ## Usage
 
@@ -46,7 +62,7 @@ generate_ethnicity_cohort:
       cohort: output/input_ethnicity.csv
 ```
 
-The following cohort-joiner reusable action joins the cohorts, and then saves them to an output directory.
+The following cohort-joiner reusable action joins the cohorts, and then saves them to a new output directory.
 Remember to replace `[version]` with [a cohort-joiner version][1]:
 
 ```yaml
