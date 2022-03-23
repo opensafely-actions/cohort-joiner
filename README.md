@@ -17,12 +17,6 @@ Using cohort-joiner has several advantages over writing a [scripted action][]:
   Replacing the extracts makes it harder to construct an audit trail, which reduces computational and analytical transparency;
   [core principles][3] of the OpenSAFELY platform.
 
-[2]: https://gist.github.com/iaindillingham/4903394b65dc3bad3b54e0eb1cde7ea5
-[3]: https://docs.opensafely.org/
-[left join]: https://en.wikipedia.org/wiki/Join_(SQL)#Left_outer_join
-[scripted action]: https://docs.opensafely.org/actions-scripts/
-[the measures framework]: https://docs.opensafely.org/measures/
-
 ## Usage
 
 In summary:
@@ -92,9 +86,14 @@ generate_measures:
       measure: output/joined/measure_*.csv
 ```
 
-[1]: https://github.com/opensafely-actions/cohort-joiner/tags
-[cohort-extractor]: https://docs.opensafely.org/actions-cohortextractor/
-
 ## Notes for developers
 
 Please see [_DEVELOPERS.md_](DEVELOPERS.md).
+
+[1]: https://github.com/opensafely-actions/cohort-joiner/tags
+[2]: https://gist.github.com/iaindillingham/4903394b65dc3bad3b54e0eb1cde7ea5
+[3]: https://docs.opensafely.org/
+[cohort-extractor]: https://docs.opensafely.org/actions-cohortextractor/
+[left join]: https://en.wikipedia.org/wiki/Join_(SQL)#Left_outer_join
+[scripted action]: https://docs.opensafely.org/actions-scripts/
+[the measures framework]: https://docs.opensafely.org/measures/
