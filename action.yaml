@@ -1,1 +1,1 @@
-run: python:latest analysis/cohort_joiner.py
+run: python:latest python analysis/cohort_joiner.py
