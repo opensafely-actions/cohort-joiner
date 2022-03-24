@@ -7,12 +7,15 @@ Extracting and joining the cohorts in this way is more efficient than several we
 
 Using cohort-joiner has several advantages over writing a [scripted action][]:
 
-* cohort-joiner uses the same logic as cohort-extractor to save files,
+* **Compatibility:**
+  cohort-joiner uses the same logic as cohort-extractor to save files,
   meaning that it's compatible with "downstream" actions,
   such as [the measures framework][].
-* cohort-joiner uses [an efficient strategy][2] for joining the extracts.
+* **Efficiency:**
+  cohort-joiner uses [an efficient strategy][2] for joining the extracts.
   This strategy uses roughly 2.9 times less memory than an alternative, previously documented, strategy.
-* cohort-joiner doesn't replace the extracts;
+* **Transparency:**
+  cohort-joiner doesn't replace the extracts;
   instead, it saves the joined extracts in a new output directory.
   Replacing the extracts makes it harder to construct an audit trail, which reduces computational and analytical transparency;
   [core principles][3] of the OpenSAFELY platform.
