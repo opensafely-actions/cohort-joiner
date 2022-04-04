@@ -22,11 +22,17 @@ def write_dataframe(dataframe, path):
     # We refactored this function, replacing copy-and-paste code from cohort-extractor
     # with a call to cohort-extractor itself. However, the error types differed. We
     # preserved the pre-refactoring error type.
-    try:
-        pandas_utils.dataframe_to_file(dataframe, path)
-    except RuntimeError:
-        ext = get_extension(path)
-        raise ValueError(f"Cannot write '{ext}' files")
+    ext = get_extension(path)
+    if ext == ".feather":
+        # We write feather files ourselves, because of an issue with dependencies.
+        # For more information, see:
+        # https://github.com/opensafely-actions/cohort-joiner/issues/25
+        dataframe.to_feather(path)
+    else:
+        try:
+            pandas_utils.dataframe_to_file(dataframe, path)
+        except RuntimeError:
+            raise ValueError(f"Cannot write '{ext}' files")
 
 
 def get_extension(path):
