@@ -26,7 +26,7 @@ In summary:
 
 * Use [cohort-extractor][] to extract the left-hand cohorts.
   These are several weekly or monthly extracts for variables that are expected to change,
-  such as whether a patient has experienced an <abbr title="Systolic Blood Pressure">SBP</abbr> event.
+  such as whether a patient has experienced a systolic blood pressure event.
 * Use cohort-extractor to extract the right hand cohort.
   This is a single extract for variables that are not expected to change, such as ethnicity.
 * Use cohort-joiner to join the cohorts, and then to save them to an output directory.
