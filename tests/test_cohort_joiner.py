@@ -138,7 +138,7 @@ def test_parse_args(tmp_path, monkeypatch):
     args = cohort_joiner.parse_args()
 
     assert args.lhs_paths == [tmp_path / "input_2021-01-01.csv"]
-    assert args.rhs_paths == [tmp_path / "input_ethnicity.csv"]
+    assert args.rhs_path == tmp_path / "input_ethnicity.csv"
     assert args.output_path == tmp_path / "output" / "joined"
 
 
