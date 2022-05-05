@@ -74,6 +74,7 @@ def parse_args():
         dest="output_path",
         default="output/joined",
         type=get_path,
+        metavar="OUTPUT_DIR",
         help="The output directory. If it doesn't exist, then it will be created",
     )
     return parser.parse_args()
