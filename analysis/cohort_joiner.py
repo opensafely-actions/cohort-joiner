@@ -63,17 +63,18 @@ def parse_args():
     )
     parser.add_argument(
         "--rhs",
-        dest="rhs_paths",
+        dest="rhs_path",
         required=True,
-        type=match_paths,
-        metavar="RHS_PATTERN",
-        help="Glob pattern for matching one input dataframe that will form the right-hand side of the join",
+        type=get_path,
+        metavar="RHS_FILE",
+        help="The input dataframe that will form the right-hand side of the join",
     )
     parser.add_argument(
         "--output-dir",
         dest="output_path",
         default="output/joined",
         type=get_path,
+        metavar="OUTPUT_DIR",
         help="The output directory. If it doesn't exist, then it will be created",
     )
     return parser.parse_args()
@@ -87,7 +88,7 @@ def check_paths(lhs_paths, rhs_path, output_path):
 def main():
     args = parse_args()
     lhs_paths = args.lhs_paths
-    rhs_path = args.rhs_paths[0]
+    rhs_path = args.rhs_path
     output_path = args.output_path
     check_paths(lhs_paths, rhs_path, output_path)
 
