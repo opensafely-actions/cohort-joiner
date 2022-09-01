@@ -44,11 +44,20 @@ def left_join(lhs_dataframe, rhs_dataframe):
 
 
 def get_path(*args):
-    return pathlib.Path(*args).resolve()
+    if is_glob("/".join(args)):
+        raise argparse.ArgumentTypeError(
+            "Argument should be a path and not a glob pattern"
+        )
+    else:
+        return pathlib.Path(*args).resolve()
 
 
 def match_paths(pattern):
     return [get_path(x) for x in glob.glob(pattern)]
+
+
+def is_glob(s):
+    return any(c in ["*", "?", "[", "]"] for c in s)
 
 
 def parse_args():

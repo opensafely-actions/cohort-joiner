@@ -1,3 +1,4 @@
+import argparse
 import csv
 import gzip
 import pathlib
@@ -142,6 +143,11 @@ def test_parse_args(tmp_path, monkeypatch):
     assert args.output_path == tmp_path / "output" / "joined"
 
 
+def test_get_path():
+    with pytest.raises(argparse.ArgumentTypeError):
+        cohort_joiner.get_path("input_*.csv")
+
+
 class TestCheckPaths:
     def test_output_contains_input(self, tmp_path):
         lhs_paths = [tmp_path / "input_2021-01-01.csv"]
@@ -155,3 +161,16 @@ class TestCheckPaths:
         rhs_path = tmp_path / "input_ethnicity.csv"
         output_path = tmp_path / "joined"
         assert cohort_joiner.check_paths(lhs_paths, rhs_path, output_path) is None
+
+
+@pytest.mark.parametrize(
+    "s,result",
+    [
+        ("input_*.csv", True),
+        ("input_?.csv", True),
+        ("input_[a-z].csv", True),
+        ("input.csv", False),
+    ],
+)
+def test_is_glob(s, result):
+    assert cohort_joiner.is_glob(s) == result
