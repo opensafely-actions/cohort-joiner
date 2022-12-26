@@ -3,6 +3,6 @@
 # To generate requirements file, run:
 # pip-compile --generate-hashes --output-file=requirements.prod.txt requirements.prod.in
 
-opensafely-cohort-extractor==1.80.10
+opensafely-cohort-extractor==1.81.0
 pandas==1.0.1
 pyarrow==3.0.0
