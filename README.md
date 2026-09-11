@@ -1,3 +1,11 @@
+-------------------------------------
+
+# :warning: DEPRECATED :warning:
+
+This reusable action has been deprecated and is no longer maintained.
+
+-------------------------------------
+
 # cohort-joiner
 
 cohort-joiner performs a database-style [left join][] between several left-hand cohorts and a single right-hand cohort.
